@@ -29,20 +29,11 @@ app.get('/api/articlelist', (req, res) => {
   });
 });
 
-app.get('/api/articleSrc/:id/:areaWidth', (req, res) => {
+app.get('/api/articleSrc/:id', (req, res) => {
   const id = req.params.id;
-  const width = req.params.areaWidth;
-  fs.readdir(`${articlePath}/${id}/article`, (err, files) => {
-    cp.exec(
-      `docker run --rm -v \`pwd\`:/pdf bwits/pdf2htmlex pdf2htmlEX --dest-dir ./output --fit-width ${
-        width - 20
-      } ${articlePath}/${id}/article/${files[0]}`,
-      (err, stdout, stderr) => {
-        res.sendFile(
-          `${__dirname}/output/${files[0].replace('.pdf', '.html')}`
-        );
-      }
-    );
+  const path = `${__dirname}/${articlePath}/${id}/article`;
+  fs.readdir(path, (err, files) => {
+    res.sendFile(`${path}/${files[0]}`);
   });
 });
 
@@ -62,13 +53,13 @@ app.get('/api/sourcecodeSrc/:id', (req, res) => {
   });
 });
 
+// 下载文章
 app.get('/api/downloadArticle/:id', (req, res) => {
   const id = req.params.id;
   const filePath = `${articlePath}/${id}/article`;
   fs.readdir(filePath, (err, files) => {
-    res.sendFile(path.resolve(filePath, files[0]));
+    res.sendFile(path.resolve(filePath, files[1]));
   });
-
 });
 
 app.listen(port, () => {
