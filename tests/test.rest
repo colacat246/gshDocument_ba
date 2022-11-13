@@ -1,0 +1,7 @@
+get http://localhost:4999/api/articlelist
+
+###
+get http://localhost:4999/api/sourcecodeSrc/2
+
+###
+get http://localhost:4999/api/sourcecodeSrc/1
