@@ -57,7 +57,7 @@ app.get('/api/articleSrc/:id', (req, res) => {
     return;
   }
   fs.readdir(path, (err, files) => {
-    const file = files.find((i) => /\.pdf/.test(i));
+    const file = files.find((i) => /\.html/.test(i));
     if (!file) {
       res.status(404).send('no resources');
       return;
