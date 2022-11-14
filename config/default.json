@@ -1,4 +1,4 @@
 {
-    "port": "4999",
-    "articlePath": "./tests/articles"
+    "port": "9999",
+    "articlePath": "/home/cv/projects/gsh_doc_ba/tests/articles"
 }

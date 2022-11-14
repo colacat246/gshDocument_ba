@@ -17,30 +17,60 @@ app.use('/', (req, res, next) => {
 });
 
 app.use(express.static('public/dist'));
-
+// 获取文章列表
 app.get('/api/articlelist', (req, res) => {
   const data = [];
+  if (!fs.existsSync(articlePath)) {
+    res.send(data);
+    return;
+  }
   fs.readdir(articlePath, (err, files) => {
-    files.forEach((i) => {
-      const files = fs.readdirSync(`${articlePath}/${i}/article`);
-      data.push({ id: i, title: files[0].split('.')[0] });
-    });
+    if (!files) {
+      res.send(data);
+      return;
+    }
+    files
+      .filter((i) => i !== 'flushArticles.js')
+      .forEach((i) => {
+        const curPath = path.resolve(articlePath, i, 'article');
+        // 判断路径是否存在
+        if (!fs.existsSync(curPath)) {
+          return;
+        }
+        const files = fs.readdirSync(curPath);
+        // 判断文件是否存在
+        if (!files || !/\.html$/.test(files[0])) {
+          return;
+        }
+        data.push({ id: i, title: files[0].split('.')[0] });
+      });
     res.send(data);
   });
 });
-
+// 获取文章html文件
 app.get('/api/articleSrc/:id', (req, res) => {
   const id = req.params.id;
-  const path = `${__dirname}/${articlePath}/${id}/article`;
+  const path = `${articlePath}/${id}/article`;
   fs.readdir(path, (err, files) => {
     res.sendFile(`${path}/${files[0]}`);
   });
 });
-
+// 获取源代码
 app.get('/api/sourcecodeSrc/:id', (req, res) => {
   const id = req.params.id;
-  fs.readdir(`${articlePath}/${id}/sourceCode`, (err, files) => {
-    const data = [];
+  const curPath = path.resolve(articlePath, id, 'sourceCode');
+  const data = [];
+  // 判断是否存在sourceCode文件夹
+  if (!curPath) {
+    res.send(data);
+    return;
+  }
+  fs.readdir(curPath, (err, files) => {
+    // 判断是否存在文件
+    if (!files) {
+      res.send(data);
+      return;
+    }
     files.forEach((i) => {
       const code = fs.readFileSync(`${articlePath}/${id}/sourceCode/${i}`);
       data.push({
@@ -65,3 +95,5 @@ app.get('/api/downloadArticle/:id', (req, res) => {
 app.listen(port, () => {
   console.log(`started on port ${port}`);
 });
+
+// TODO 服务器挂了发送邮件

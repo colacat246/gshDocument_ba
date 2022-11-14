@@ -1,4 +1,4 @@
 {
-    "port": "4999",
-    "articlePath": null
+    "port": "9999",
+    "articlePath": "/home/jym/publishedArticles"
 }
