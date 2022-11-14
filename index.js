@@ -9,13 +9,6 @@ const app = express();
 const articlePath = config.get('articlePath');
 const port = config.get('port');
 
-app.use('/', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*'); // 允许跨域的前端地址
-  res.header('Access-Control-Allow-Headers', '*'); // 允许前端发送的请求头
-  res.header('Access-Control-Expose-Headers', '*'); // 可以被前端获取的头信息
-  next();
-});
-
 app.use(express.static('public/dist'));
 // 获取文章列表
 app.get('/api/articlelist', (req, res) => {
@@ -52,7 +45,6 @@ app.get('/api/articleSrc/:id', (req, res) => {
   const id = req.params.id;
   const path = `${articlePath}/${id}/article`;
   if (!fs.existsSync(path)) {
-    console.log('toggle');
     res.status(404).send('no resources');
     return;
   }
