@@ -51,8 +51,18 @@ app.get('/api/articlelist', (req, res) => {
 app.get('/api/articleSrc/:id', (req, res) => {
   const id = req.params.id;
   const path = `${articlePath}/${id}/article`;
+  if (!fs.existsSync(path)) {
+    console.log('toggle');
+    res.status(404).send('no resources');
+    return;
+  }
   fs.readdir(path, (err, files) => {
-    res.sendFile(`${path}/${files[0]}`);
+    const file = files.find((i) => /\.pdf/.test(i));
+    if (!file) {
+      res.status(404).send('no resources');
+      return;
+    }
+    res.sendFile(`${path}/${file}`);
   });
 });
 // 获取源代码
@@ -87,8 +97,17 @@ app.get('/api/sourcecodeSrc/:id', (req, res) => {
 app.get('/api/downloadArticle/:id', (req, res) => {
   const id = req.params.id;
   const filePath = `${articlePath}/${id}/article`;
+  if (!fs.existsSync(filePath)) {
+    res.status(404).send('no resources');
+    return;
+  }
   fs.readdir(filePath, (err, files) => {
-    res.sendFile(path.resolve(filePath, files[1]));
+    const file = files.find((i) => /\.pdf/.test(i));
+    if (!file) {
+      res.status(404).send('no resources');
+      return;
+    }
+    res.sendFile(path.resolve(filePath, file));
   });
 });
 
